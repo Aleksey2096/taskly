@@ -30,7 +30,7 @@ export class UserService {
   ): Promise<UserDocument> {
     const user = await this.userModel
       .findByIdAndUpdate(id, updateUserDto, {
-        new: true,
+        returnDocument: 'after',
         runValidators: true,
       })
       .exec();

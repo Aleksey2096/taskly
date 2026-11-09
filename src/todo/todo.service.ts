@@ -56,7 +56,7 @@ export class TodoService {
         },
         updateTodoDto,
         {
-          new: true,
+          returnDocument: 'after',
           runValidators: true,
         },
       )

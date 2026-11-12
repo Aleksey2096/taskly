@@ -1,0 +1,27 @@
+# Dependencies
+node_modules
+
+# Build output
+dist
+coverage
+
+# Version control
+.git
+.gitignore
+
+# Environment variables and secrets
+.env
+.env.*
+!.env.example
+
+# IDE settings
+.idea
+.vscode
+
+# Logs
+*.log
+npm-debug.log*
+
+# Tests are executed separately from the production image
+test
+**/*.spec.ts

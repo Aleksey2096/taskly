@@ -4,9 +4,9 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
+import { Request, Response } from 'express';
 import { AuthModule } from './auth/auth.module';
 import { TodoModule } from './todo/todo.module';
-import { Request, Response } from 'express';
 
 @Module({
   imports: [
@@ -22,21 +22,30 @@ import { Request, Response } from 'express';
       }),
     }),
 
-    GraphQLModule.forRoot<ApolloDriverConfig>({
+    GraphQLModule.forRootAsync<ApolloDriverConfig>({
       driver: ApolloDriver,
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => {
+        const isProduction =
+          configService.get<string>('NODE_ENV') === 'production';
 
-      autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
+        return {
+          autoSchemaFile: isProduction
+            ? true
+            : join(process.cwd(), 'src/schema.gql'),
 
-      sortSchema: true,
+          sortSchema: true,
 
-      context: ({ req, res }: { req: Request; res: Response }) => ({
-        req,
-        res,
-      }),
+          context: ({ req, res }: { req: Request; res: Response }) => ({
+            req,
+            res,
+          }),
 
-      graphiql: process.env.NODE_ENV !== 'production',
-
-      introspection: process.env.NODE_ENV !== 'production',
+          graphiql: !isProduction,
+          introspection: !isProduction,
+        };
+      },
     }),
 
     AuthModule,

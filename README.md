@@ -1,132 +1,278 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Taskly
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Taskly is a task-management backend built with **NestJS**, **TypeScript**, **GraphQL**, and **MongoDB**. It provides user authentication and profile management together with CRUD operations for personal to-do items. The API uses JWT-based authentication and restricts each user to their own tasks.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Features
 
-## Description
+- **User registration and login** using email and password.
+- **Password hashing** with Argon2.
+- **JWT authentication** for protected GraphQL operations.
+- **User profile operations**, including retrieving and updating the authenticated user's profile.
+- **Todo management**: create, retrieve, list, update, and delete tasks.
+- **Per-user data access**: todo queries and mutations are scoped to the authenticated user's ID.
+- **Input validation** through NestJS validation pipes and DTOs.
+- **Automated tests** covering services and GraphQL application flows.
+- **Docker Compose support** for running the application with MongoDB.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Technology stack
 
-## Project setup
+| Area | Technology |
+|---|---|
+| Runtime | Node.js 26 |
+| Language | TypeScript |
+| Backend framework | NestJS |
+| API | GraphQL with Apollo Server |
+| Database | MongoDB |
+| ODM | Mongoose |
+| Authentication | Passport JWT |
+| Password hashing | Argon2 |
+| Validation | `class-validator` / NestJS `ValidationPipe` |
+| Testing | Jest, ts-jest, Supertest, MongoDB Memory Server |
+| Containerization | Docker, Docker Compose |
 
-```bash
-$ npm install
-```
+The project has been developed with Node.js `26.13.0`, TypeScript `6.0.3`, and the NestJS/Apollo/Mongoose dependencies specified in `package.json`.
 
-## Compile and run the project
+## Application structure
 
-```bash
-# development
-$ npm run start
+The application is organized into NestJS modules and follows the framework's dependency-injection model.
 
-# watch mode
-$ npm run start:dev
+- **Auth** — registration, login, password verification, JWT creation, and authentication guards/strategy.
+- **User** — retrieving and updating the currently authenticated user's profile.
+- **Todo** — task creation and retrieval, updates, deletion, and ownership checks.
+- **AppModule** — application-level configuration, MongoDB connection, GraphQL configuration, and feature-module registration.
+- **`main.ts`** — application bootstrap and global request validation.
 
-# production mode
-$ npm run start:prod
-```
+GraphQL replaces a traditional REST-controller API. The GraphQL schema is generated from the application's resolver and DTO definitions.
 
-## Run tests
+## Requirements
 
-```bash
-# unit tests
-$ npm run test
+For running the application directly on your machine:
 
-# e2e tests
-$ npm run test:e2e
+- Node.js `26.x` (the project has been tested with `26.13.0`).
+- npm.
+- MongoDB running locally or an accessible MongoDB instance.
 
-# test coverage
-$ npm run test:cov
-```
+For the containerized setup:
 
-## Deployment
+- Docker Engine or Docker Desktop.
+- Docker Compose v2.
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+## Getting started
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### 1. Clone the repository
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+git clone <repository-url>
+cd taskly
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Observability
-
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
-
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
-
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project, run this and approve the code it prints at [observe.nestjs.com/link](https://observe.nestjs.com/link) - signing up for free if you have no account:
+### 2. Install dependencies
 
 ```bash
-$ npx @nestjs/observe link
+npm ci
 ```
 
-It installs `@nestjs/observe`, wires it into `AppModule` and `main.ts`, and writes the app key and secret into `.env`, which every `nest start` script (`start`, `start:dev`, `start:debug`) then loads. In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment instead.
+`npm ci` uses the committed `package-lock.json` to install the dependency versions recorded by the project.
 
-Or do it by hand:
+### 3. Configure environment variables
+
+Create a local `.env` file in the project root:
 
 ```bash
-$ npm install @nestjs/observe
+cp .env.example .env
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/sdk) - it takes a single import and an app key.
+For running the application directly on your machine, configure the following values. The MongoDB URI below assumes a local MongoDB instance without authentication.
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+```dotenv
+PORT=3000
+JWT_SECRET=replace_with_a_long_random_secret
+MONGODB_URI=mongodb://127.0.0.1:27017/taskly
+```
 
-## Resources
+Generate a strong JWT secret with:
 
-Check out a few resources that may come in handy when working with NestJS:
+```bash
+openssl rand -hex 32
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+Do not commit `.env` or put real credentials in source control.
 
-## Support
+### 4. Start MongoDB
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+Make sure MongoDB is running and that the database URI configured in `MONGODB_URI` is reachable from the application.
 
-## Stay in touch
+### 5. Run the application
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+Start the application in development mode:
+
+```bash
+npm run start:dev
+```
+
+Build the application:
+
+```bash
+npm run build
+```
+
+Run the compiled application:
+
+```bash
+npm run start:prod
+```
+
+## GraphQL API
+
+The GraphQL endpoint is available at:
+
+```text
+http://localhost:3000/graphql
+```
+
+In non-production environments, GraphiQL and schema introspection are enabled. You can use the GraphiQL interface to explore the available queries, mutations, input types, and return fields.
+
+The API exposes operations for the following areas:
+
+| Area | Operations |
+|---|---|
+| Authentication | Register an account and log in to obtain an access token. |
+| User | Retrieve the current user's profile and update it. |
+| Todos | List the current user's todos, retrieve one todo, create, update, and delete todos. |
+
+Protected operations require the JWT access token in the HTTP `Authorization` header:
+
+```http
+Authorization: Bearer <access-token>
+```
+
+The token is returned by the login flow. The application uses a global JWT guard for protected operations, while explicitly public authentication operations can bypass the guard.
+
+## Authentication and authorization
+
+Passwords are hashed with Argon2 before being stored. Plain-text passwords are never intended to be persisted.
+
+After successful authentication, the API issues a signed JWT. The authenticated user's identity is extracted from the token and made available to GraphQL resolvers. Todo service operations use both the todo ID and the authenticated user's ID when reading, updating, or deleting a task. This prevents a user from accessing or modifying another user's todos by supplying a different todo ID.
+
+## Validation and runtime configuration
+
+The application configures a global NestJS `ValidationPipe` with:
+
+- `whitelist: true` — removes properties that are not declared by the input DTO.
+- `forbidNonWhitelisted: true` — rejects requests containing undeclared properties.
+- `transform: true` — transforms incoming values to the DTO types when applicable.
+
+GraphQL schema behavior depends on `NODE_ENV`:
+
+- In development, the schema is written to `src/schema.gql`; GraphiQL and introspection are enabled.
+- In production, the schema is generated in memory; GraphiQL and introspection are disabled.
+
+The application listens on `0.0.0.0` and uses port `3000` by default. Set `PORT` to override it.
+
+## Running with Docker Compose
+
+Docker Compose starts the NestJS application and MongoDB as separate containers. The application connects to MongoDB using the Compose service hostname (`mongo`), and MongoDB data is stored in a named Docker volume.
+
+### 1. Configure Docker environment variables
+
+Create `.env` from the example file if you have not already:
+
+```bash
+cp .env.example .env
+```
+
+Set values similar to the following in `.env`:
+
+```dotenv
+APP_PORT=3000
+JWT_SECRET=replace_with_a_long_random_secret
+MONGO_INITDB_ROOT_USERNAME=taskly_admin
+MONGO_INITDB_ROOT_PASSWORD=replace_with_a_strong_password
+```
+
+Use generated secrets rather than the sample values. Prefer a password made of URL-safe characters when the Compose file builds the MongoDB connection URI from the username and password.
+
+### 2. Build and start the containers
+
+```bash
+docker compose up --build -d
+```
+
+Check container status:
+
+```bash
+docker compose ps
+```
+
+Follow application logs:
+
+```bash
+docker compose logs -f app
+```
+
+The GraphQL endpoint will be available at `http://localhost:3000/graphql` when `APP_PORT` is set to `3000`. If you change `APP_PORT`, use that host port instead.
+
+### 3. Stop the containers
+
+```bash
+docker compose down
+```
+
+To remove the MongoDB data volume as well:
+
+```bash
+docker compose down -v
+```
+
+> **Warning:** `docker compose down -v` deletes the named MongoDB volume and its stored database data. Use it only when you intend to reset the database.
+
+### MongoDB access from a local database client
+
+If the Compose file publishes MongoDB on `127.0.0.1:27017`, a local client such as MongoDB Compass can connect through `localhost:27017` using the credentials configured in `.env`. The database is otherwise reachable by the application through the internal Docker network and the hostname `mongo`.
+
+## Testing
+
+Run the unit test suite:
+
+```bash
+npm test -- --runInBand
+```
+
+Run end-to-end tests (if the `test:e2e` script is present in `package.json`):
+
+```bash
+npm run test:e2e -- --runInBand
+```
+
+Generate test coverage (if the `test:cov` script is present):
+
+```bash
+npm run test:cov
+```
+
+The end-to-end tests use an isolated MongoDB test instance, so they do not need to use the development database configured in `.env`.
+
+## Useful commands
+
+| Command | Description |
+|---|---|
+| `npm ci` | Install locked dependencies. |
+| `npm run start:dev` | Start the application in development mode with file watching. |
+| `npm run build` | Compile the TypeScript application. |
+| `npm run start:prod` | Run the compiled application. |
+| `npm test -- --runInBand` | Run unit tests sequentially. |
+| `docker compose up --build -d` | Build and start the application and database containers. |
+| `docker compose logs -f app` | Follow application logs. |
+| `docker compose down` | Stop and remove the containers and network. |
+
+## Security notes
+
+- Keep `JWT_SECRET` private and use a different value for each environment.
+- Never commit `.env` files or production credentials.
+- Use HTTPS when exposing the API outside a trusted local development environment.
+- Keep GraphiQL and GraphQL introspection disabled in production unless there is a deliberate operational reason to enable them.
+- Back up the MongoDB data volume before performing destructive database or container maintenance.
 
 ## License
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+No license has been specified for this project yet. Add a `LICENSE` file and update this section before distributing the application if you intend to publish it under an open-source license.
